@@ -1,8 +1,8 @@
 # Try Hack Me - Tokyo Ghoul
 # Author: Atharva Bordavekar
 # Difficulty: Medium
-# Points: 
-# Vulnerabilities:
+# Points: 270
+# Vulnerabilities: Steganography, LFI, Python code injection
 
 # Phase 1 - Reconnaissance:
 
