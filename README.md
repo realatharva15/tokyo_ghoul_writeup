@@ -83,6 +83,8 @@ now we can see some gif with text below that says scan me and stuff.
 
 ![scanmedaddy](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/scanmedaddy.png)
 
+# Phase 2 - Initial Foothold:
+
 lets run a gobuster scan on the directory.
 
 ```bash 
@@ -99,6 +101,8 @@ http://<target_ip>/d1r3c70ry_center/claim?view=..%2f..%2f..%2f..%2fetc%2fpasswd
 ![LFI](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/LFI.png)
 
 we have sucessfully exploited LFI! we can also see the password hash of the user kamishiro which is good for us. save the password hash in a kamishiro_hash file. we will use john the ripper to crack the password hash
+
+# Shell as kamishiro:
 
 ```bash
 john --wordlist=/usr/share/wordlists/rockyou.txt kamishiro_hash
@@ -122,6 +126,8 @@ this is good news, we have found the intended path to get a root shell. my initi
 ```bash
 cat jail.py
 ```
+# Phase 3 - ROOT access:
+
 after spending some time analyzing the script, i noticed that there is some filtering done in the script which blocks the use of the following:
 
 `['eval', 'exec', 'import', 'open', 'os', 'read', 'system', 'write']`
