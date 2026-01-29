@@ -27,6 +27,8 @@ we can see that the OS running is an Ubuntu OS. lets submit that and move furthe
 
 now lets enumerate the webpage at port 80 first. the mainpage is just an introduction with an image. we find a link at the bottom. after clicking on it, we are directed to a /jasonroom.html page where we find a gif. but there is something interesting in the source code.
 
+![sourcecode](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/source_code.png)
+
 its just a hint for accessing the ftp server at port 21.
 
 ```bash
@@ -69,25 +71,41 @@ after entering the passphrase we get another passphrase which to my understandin
 steghide extract -sf rize_and_kaneki.jpg 
 # enter the passphrase when prompted
 ```
-now we get a file named yougotme.txt which contains some morse code. lets use the online morse code translator to get the output of the code. now after translating, we get another string which looks like it is encoded in hexadecimal. using cyber chef we can decode it from hex. we get a base64 string as the output. after decoding that aswell, we can find a name which can possibly be the name of a hidden directory at the webpage. lets access that directory.
+now we get a file named yougotme.txt which contains some morse code. lets use the online morse code translator to get the output of the code. 
 
-now we can see some gif with text below that says scan me and stuff. lets run a gobuster scan on the directory.
+![morsecode](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/morsecodeE.png)
+
+now after translating, we get another string which looks like it is encoded in hexadecimal. using cyber chef we can decode it from hex. we get a base64 string as the output. after decoding that aswell, we can find a name which can possibly be the name of a hidden directory at the webpage. 
+
+![cyberchef](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/cyberchef.png)
+
+now we can see some gif with text below that says scan me and stuff.
+
+![scanmedaddy](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/scanmedaddy.png)
+
+lets run a gobuster scan on the directory.
 
 ```bash 
  gobuster dir -u http://<target_ip>/d1r3c70ry_center -w /usr/share/wordlists/dirb/common.txt
 ```
 `/claim                (Status: 301) [Size: 329]`
+
 now after accessing the /claim directory, i immediately found a possible LFI vulnerability! the ?view=flower.gif is vulnerable to local file inclusion. although there must be some sanitizations carried out. i used several bypass payloads to access /etc/passwd but the only one which work was the urlencoded payload
 
 ```bash
 # in your broswer:
 http://<target_ip>/d1r3c70ry_center/claim?view=..%2f..%2f..%2f..%2fetc%2fpasswd
 ```
+![LFI](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/LFI.png)
+
 we have sucessfully exploited LFI! we can also see the password hash of the user kamishiro which is good for us. save the password hash in a kamishiro_hash file. we will use john the ripper to crack the password hash
 
 ```bash
 john --wordlist=/usr/share/wordlists/rockyou.txt kamishiro_hash
 ```
+
+![johnny](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/johnnyE.png)
+
 now we have cracked the password aswell. lets login into the ssh server.
 
 ```bash
@@ -98,6 +116,8 @@ we have a shell as kamishiro! lets read and submit the user.txt flag. lets check
 ```bash
 sudo -l
 ```
+![privesc](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/privesc.png)
+
 this is good news, we have found the intended path to get a root shell. my initial thought was to delete the orignal jail.py script and create my own malicious script with the same name but with a reverse shell in it, but we do not have the required permissions to do that, i guess we are left with command injection as out only option.
 ```bash
 cat jail.py
@@ -116,5 +136,7 @@ now simply inject the payload below to get a root shell
 ```bash
 getattr(__builtins__, '__imp'+'ort__')('subpr'+'ocess').call(['/bin/sh'])
 ```
+![root](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/rooted.png)
+
 and just like that we have defeated Jason, and got ourselves a root shell. we will read and submit the root.txt flag.
                        
