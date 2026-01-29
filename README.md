@@ -18,6 +18,13 @@ PORT   STATE SERVICE
 
 80/tcp open  http
 
+for answering the 3rd question of Task 2, we will use the -sV and -sC flags on the port 22.
+
+```bash
+nmap -p 22 -sC -sV <target_ip>
+```
+we can see that the OS running is an Ubuntu OS. lets submit that and move further.
+
 now lets enumerate the webpage at port 80 first. the mainpage is just an introduction with an image. we find a link at the bottom. after clicking on it, we are directed to a /jasonroom.html page where we find a gif. but there is something interesting in the source code.
 
 its just a hint for accessing the ftp server at port 21.
