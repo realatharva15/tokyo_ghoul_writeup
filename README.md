@@ -60,6 +60,8 @@ now lets find out whats in the files. inside the Aogiri_tree.txt file we do not 
 ```bash
 strings need_to_talk
 ```
+![strings](https://github.com/realatharva15/tokyo_ghoul_writeup/blob/main/image/susE.png)
+
 after analysing the strings, we can find out that the binary will ask for a passphrase. the funny thing is that you can see the passphrase in the strings output itself. lets enter it, but first we will have to give the file the appropriate permissions.
 ```bash
 chmod +x need_to_talk
